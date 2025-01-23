@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/profile.css"> 
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <form class="form w-100" id="profileForm" enctype="multipart/form-data">
+                    <p class="title text-center">Profile</p>
+                    <p class="message text-center">Update your profile details below.</p>
+                    <div id="profileMessage" class="text-center">
+                        <div class="alert alert-info" style="display: none;">
+                            It looks like this is your first time logging in. Please update your profile details below.
+                        </div>
+                        <img id="profileImg" src="#" alt="Profile Picture" class="circular-image" style="display: none;">
+                    </div>
+                    <div class="form-group w-100">
+                        <label class="w-100">
+                            <input required="" placeholder="" type="number" class="input form-control w-100" id="age" name="age"/>
+                            <span>Age</span>
+                        </label>
+                    </div>
+                    <div class="form-group w-100">
+                        <label class="w-100">
+                            <input required="" placeholder="" type="date" class="input form-control w-100" id="dob" name="dob"/>
+                            <span>Date of Birth</span>
+                        </label>
+                    </div>
+                    <div class="form-group w-100">
+                        <label class="w-100">
+                            <input required="" placeholder="" type="text" class="input form-control w-100" id="contact" name="contact"/>
+                            <span>Contact</span>
+                        </label>
+                    </div>
+                    <div class="form-group w-100">
+                        <label class="w-100" for="profilePicture">
+                            <input type="file" class="input form-control w-100" id="profilePicture" name="profilePicture" accept="image/*"/>
+                            <span>Profile Picture</span>
+                        </label>
+                        <div class="form-group w-100 text-center">
+                            <img id="profileImg" src="#" alt="Profile Picture" class="circular-image" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit btn btn-primary btn-block w-100">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="/js/profile.js"></script>
+</body>
+</html>

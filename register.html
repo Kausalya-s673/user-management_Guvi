@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/register.css"> 
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <form class="form w-100" id="registerForm">
+                    <p class="title text-center">Register</p>
+                    <p class="message text-center">Signup now and get full access to our app.</p>
+                    <div class="form-group w-100">
+                        <label class="w-100">
+                            <input required="" placeholder="" type="text" class="input form-control w-100" id="name"/>
+                            <span>Username</span>
+                        </label>
+                    </div>
+                    <div class="form-group w-100">
+                        <label class="w-100">
+                            <input required="" placeholder="" type="email" class="input form-control w-100" id="email"/>
+                            <span>Email</span>
+                        </label>
+                    </div>
+                    <div class="form-group w-100">
+                        <label class="w-100">
+                            <input required="" placeholder="" type="password" class="input form-control w-100" id="password"/>
+                            <span>Password</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="submit btn btn-primary btn-block w-100">Register</button>
+                    <p class="signin text-center">Already have an account? <a href="login.html">Signin</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="/js/register.js"></script>
+</body>
+</html>
