@@ -36,6 +36,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    // Check for duplicate username
+    $stmt = $conn->prepare("SELECT username FROM users WHERE username = ?");
+    if ($stmt === false) {
+        echo json_encode(["success" => false, "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo json_encode(["success" => false, "message" => "Error: Username already taken."]);
+        $stmt->close();
+        $conn->close();
+        exit();
+    }
+
+    $stmt->close();
+
     // Check for duplicate email
     $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
     if ($stmt === false) {
