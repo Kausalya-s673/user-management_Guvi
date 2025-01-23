@@ -28,9 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password_raw = trim($_POST['password']);
 
     if (empty($email) || empty($password_raw)) {
-        die("Error: All fields are required.");
+        echo json_encode(["success" => false, "message" => "Error: All fields are required."]);
+        exit();
     }
 
+    // Check if the user is registered
     $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
@@ -39,6 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $stmt->store_result();
+    
+    if ($stmt->num_rows === 0) {
+        // User not registered
+        echo json_encode(["success" => false, "message" => "User not registered. Please register first."]);
+        $stmt->close();
+        $conn->close();
+        exit();
+    }
+
+    // User registered, proceed with password verification
     $stmt->bind_result($hashed_password);
     $stmt->fetch();
 
@@ -49,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $redis->expire($sessionId, 3600); // Session expires after 1 hour
         echo json_encode(["success" => true, "sessionId" => $sessionId]);
     } else {
-        echo json_encode(["success" => false]);
+        echo json_encode(["success" => false, "message" => "Invalid email or password."]);
     }
 
     $stmt->close();
 } else {
-    echo "Invalid request method.";
+    echo json_encode(["success" => false, "message" => "Invalid request method."]);
 }
 
 $conn->close();

@@ -6,8 +6,7 @@ $servername = "mysql-139adef5-kausalyas673.l.aivencloud.com";
 $username = "avnadmin";                 
 $password = "AVNS_qTmZSaWJRKOWR7fdfCs";                  
 $dbname = "user_management";                   
-$port = 28464;   
-                        
+$port = 28464;                              
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
@@ -16,50 +15,65 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  
-    echo '<pre>';
-    print_r($_POST);
-    echo '</pre>';
-
-
     $username = htmlspecialchars(trim($_POST['name']));
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $password_raw = $_POST['password'];
+    $password_raw = trim($_POST['password']);
     $password_hashed = password_hash($password_raw, PASSWORD_DEFAULT);
 
-  
+    // Server-side validations
     if (empty($username) || empty($email) || empty($password_raw)) {
-        die("Error: All fields are required.");
+        echo json_encode(["success" => false, "message" => "Error: All fields are required."]);
+        exit();
     }
 
-    echo "Received Username: $username<br>";
-    echo "Received Email: $email<br>";
-    echo "Received Raw Password: $password_raw<br>";
-    echo "Received Hashed Password: $password_hashed<br>";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(["success" => false, "message" => "Error: Invalid email format."]);
+        exit();
+    }
 
+    if (strlen($password_raw) < 6) {
+        echo json_encode(["success" => false, "message" => "Error: Password must be at least 6 characters long."]);
+        exit();
+    }
 
+    // Check for duplicate email
+    $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+    if ($stmt === false) {
+        echo json_encode(["success" => false, "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo json_encode(["success" => false, "message" => "Error: Email already registered."]);
+        $stmt->close();
+        $conn->close();
+        exit();
+    }
+
+    $stmt->close();
+
+    // Insert new user
     $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
     if ($stmt === false) {
-        die("Prepare failed: " . $conn->error);
+        echo json_encode(["success" => false, "message" => "Prepare failed: " . $conn->error]);
+        exit();
     }
 
     $stmt->bind_param("sss", $username, $email, $password_hashed);
 
     if ($stmt->execute()) {
-        echo "Registration successful<br>";
+        echo json_encode(["success" => true, "message" => "Registration successful"]);
     } else {
-        if ($stmt->errno === 1062) { // Duplicate entry error
-            echo "Error: Email already registered.<br>";
-        } else {
-            echo "Error: " . $stmt->error . "<br>";
-        }
+        echo json_encode(["success" => false, "message" => "Error: " . $stmt->error]);
     }
-
-    echo "SQL Query: INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password_hashed')<br>";
 
     $stmt->close();
 } else {
-    echo "Invalid request method.";
+    echo json_encode(["success" => false, "message" => "Invalid request method."]);
 }
 
 $conn->close();

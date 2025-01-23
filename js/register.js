@@ -1,20 +1,65 @@
 $(document).ready(function() {
     $('#registerForm').on('submit', function(event) {
         event.preventDefault();
-        $.ajax({
-            url: '../php/register.php',
-            method: 'POST',
-            data: {
-                name: $('#name').val(),
-                email: $('#email').val(),
-                password: $('#password').val()
-            },
-            success: function(response) {
-                alert('Registration successful');
-                window.location.href = '/login.html';
-            }
-        });
+
+        // Clear previous error messages
+        $('#nameError').text('');
+        $('#emailError').text('');
+        $('#passwordError').text('');
+
+        var valid = true;
+        var name = $('#name').val().trim();
+        var email = $('#email').val().trim();
+        var password = $('#password').val().trim();
+
+        // Name validation
+        if (name === '') {
+            $('#nameError').text('Username is required.');
+            valid = false;
+        }
+
+        // Email validation
+        if (email === '') {
+            $('#emailError').text('Email is required.');
+            valid = false;
+        } else if (!validateEmail(email)) {
+            $('#emailError').text('Invalid email format.');
+            valid = false;
+        }
+
+        // Password validation
+        if (password === '') {
+            $('#passwordError').text('Password is required.');
+            valid = false;
+        } else if (password.length < 6) {
+            $('#passwordError').text('Password must be at least 6 characters long.');
+            valid = false;
+        }
+
+        if (valid) {
+            $.ajax({
+                url: '../php/register.php',
+                method: 'POST',
+                data: {
+                    name: name,
+                    email: email,
+                    password: password
+                },
+                success: function(response) {
+                    var result = JSON.parse(response);
+                    if (result.success) {
+                        alert('Registration successful');
+                        window.location.href = '/login.html';
+                    } else {
+                        alert(result.message);
+                    }
+                }
+            });
+        }
     });
+
+    function validateEmail(email) {
+        var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
 });
-
-
