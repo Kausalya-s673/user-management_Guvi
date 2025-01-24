@@ -2,7 +2,6 @@ $(document).ready(function() {
     $('#loginForm').on('submit', function(event) {
         event.preventDefault();
 
-        // Clear previous error messages
         $('#emailError').text('');
         $('#passwordError').text('');
 
@@ -10,7 +9,7 @@ $(document).ready(function() {
         var email = $('#email').val().trim();
         var password = $('#password').val().trim();
 
-        // Email validation
+ 
         if (email === '') {
             $('#emailError').text('Email is required.');
             valid = false;
@@ -19,7 +18,7 @@ $(document).ready(function() {
             valid = false;
         }
 
-        // Password validation
+        
         if (password === '') {
             $('#passwordError').text('Password is required.');
             valid = false;

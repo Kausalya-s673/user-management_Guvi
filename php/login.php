@@ -4,11 +4,11 @@ ini_set('display_errors', 1);
 
 require '../vendor/autoload.php';
 
-// Redis connection configuration
+
 $redis = new Predis\Client([
     'scheme' => 'tcp',
-    'host'   => 'red-cu98d2aj1k6c73f64t20', // Use the hostname part of your internal URL
-    'port'   => 6379                        // The port part of your internal URL
+    'host'   => 'red-cu98d2aj1k6c73f64t20', 
+    'port'   => 6379                        
 ]);
 
 $servername = "mysql-139adef5-kausalyas673.l.aivencloud.com"; 
@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Check if the user is registered
     $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
@@ -43,14 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->store_result();
     
     if ($stmt->num_rows === 0) {
-        // User not registered
+    
         echo json_encode(["success" => false, "message" => "User not registered. Please register first."]);
         $stmt->close();
         $conn->close();
         exit();
     }
 
-    // User registered, proceed with password verification
+
     $stmt->bind_result($hashed_password);
     $stmt->fetch();
 
@@ -58,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_start();
         $sessionId = session_id();
         $redis->set($sessionId, $email);
-        $redis->expire($sessionId, 3600); // Session expires after 1 hour
+        $redis->expire($sessionId, 3600); 
         echo json_encode(["success" => true, "sessionId" => $sessionId]);
     } else {
         echo json_encode(["success" => false, "message" => "Invalid email or password."]);

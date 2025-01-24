@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password_raw = trim($_POST['password']);
     $password_hashed = password_hash($password_raw, PASSWORD_DEFAULT);
 
-    // Server-side validations
+
     if (empty($username) || empty($email) || empty($password_raw)) {
         echo json_encode(["success" => false, "message" => "Error: All fields are required."]);
         exit();
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Check for duplicate username
+ 
     $stmt = $conn->prepare("SELECT username FROM users WHERE username = ?");
     if ($stmt === false) {
         echo json_encode(["success" => false, "message" => "Prepare failed: " . $conn->error]);
@@ -56,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->close();
 
-    // Check for duplicate email
     $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
     if ($stmt === false) {
         echo json_encode(["success" => false, "message" => "Prepare failed: " . $conn->error]);
@@ -76,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->close();
 
-    // Insert new user
+
     $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
     if ($stmt === false) {
         echo json_encode(["success" => false, "message" => "Prepare failed: " . $conn->error]);
